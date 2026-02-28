@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Questions - ExamElite{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="mb-5">
+        <a href="{{ url_for('exam.index') }}" class="text-decoration-none text-muted small mb-2 d-inline-block">
+            <i class="fas fa-arrow-left me-1"></i> Back to Exams
+        </a>
+        <h2 class="fw-bold mb-0">Questions for {{ exam.title }}</h2>
+        <p class="text-muted">Add or remove questions from your exam bank.</p>
+    </div>
+
+    <div class="row">
+        <!-- Add Question Form -->
+        <div class="col-lg-7">
+            <div class="glass-card mb-4">
+                <h4 class="fw-bold mb-4">Add New Question</h4>
+                <form method="POST">
+                    <div class="mb-4">
+                        <label for="text" class="form-label small fw-bold">Question Text</label>
+                        <textarea class="form-control form-control-custom" id="text" name="text" rows="3"
+                            placeholder="Enter the question description..." required></textarea>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        {% for opt in ['A', 'B', 'C', 'D'] %}
+                        <div class="col-md-6">
+                            <label for="option_{{ opt|lower }}" class="form-label small fw-bold">Option {{ opt
+                                }}</label>
+                            <input type="text" class="form-control form-control-custom" id="option_{{ opt|lower }}"
+                                name="option_{{ opt|lower }}" placeholder="Option {{ opt }} text" required>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="correct_option" class="form-label small fw-bold">Correct Option</label>
+                            <select class="form-select form-control-custom" id="correct_option" name="correct_option"
+                                required>
+                                <option value="A">Option A</option>
+                                <option value="B">Option B</option>
+                                <option value="C">Option C</option>
+                                <option value="D">Option D</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="marks" class="form-label small fw-bold">Marks</label>
+                            <input type="number" class="form-control form-control-custom" id="marks" name="marks"
+                                value="1" min="1">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-premium w-100 py-3">
+                        <i class="fas fa-plus-circle me-2"></i>Add Question to Exam
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Question List -->
+        <div class="col-lg-5">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Existing Questions</h5>
+                    <span class="badge bg-soft-primary text-primary rounded-pill px-3">{{ exam.questions.count()
+                        }}</span>
+                </div>
+
+                <div class="overflow-auto" style="max-height: 500px;">
+                    {% for q in exam.questions %}
+                    <div class="p-3 mb-3 border rounded-3 bg-white bg-opacity-50">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <small class="text-muted fw-bold">Question {{ loop.index }}</small>
+                            <form action="{{ url_for('exam.delete_question', question_id=q.id) }}" method="POST"
+                                onsubmit="return confirm('Delete this question?');">
+                                <button type="submit" class="p-0 border-0 bg-transparent text-danger small">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <p class="small mb-2">{{ q.text }}</p>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-success small">Ans: {{ q.correct_option }}</span>
+                            <span class="badge bg-light text-dark small">{{ q.marks }} Marks</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="far fa-question-circle fa-3x text-muted mb-3 d-block"></i>
+                        <p class="text-muted small">No questions added yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

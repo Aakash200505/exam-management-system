@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Performance Analytics - ExamElite{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="mb-5">
+        <h2 class="fw-bold mb-0">Exam Analytics</h2>
+        <p class="text-muted">Global overview of student performance and trends.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Chart Section -->
+        <div class="col-lg-8">
+            <div class="glass-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold">Average Scores per Exam</h5>
+                    <div class="icon-shape bg-soft-primary rounded-circle p-2"
+                        style="background: rgba(66, 135, 245, 0.1);">
+                        <i class="fas fa-chart-bar text-primary"></i>
+                    </div>
+                </div>
+                <div style="height: 350px;">
+                    <canvas id="examChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="col-lg-4">
+            <div class="glass-card h-100">
+                <h5 class="fw-bold mb-4">Export Performance Data</h5>
+                <div class="overflow-auto" style="max-height: 400px;">
+                    {% for item in exam_data %}
+                    <div
+                        class="d-flex justify-content-between align-items-center p-3 mb-3 border rounded-3 bg-white bg-opacity-25">
+                        <div class="me-3">
+                            <h6 class="fw-bold mb-0 small">{{ item.title }}</h6>
+                            <small class="text-muted">Avg: {{ item.avg_score|round(1) }}%</small>
+                        </div>
+                        <a href="{{ url_for('analytics.export_csv', exam_id=item.id) }}"
+                            class="btn btn-sm btn-outline-success rounded-pill px-3">
+                            CSV <i class="fas fa-download ms-1"></i>
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-file-csv fa-3x text-muted mb-3 opacity-25"></i>
+                        <p class="text-muted small">No data to export.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 pt-4 border-top">
+                    <p class="small text-muted">Generate detailed reports for your records or student feedback.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('examChart').getContext('2d');
+    const examLabels = {{ exam_data| map(attribute = 'title') | list | tojson }};
+    const avgScores = {{ exam_data| map(attribute = 'avg_score') | list | tojson }};
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: examLabels,
+            datasets: [{
+                label: 'Average Score (%)',
+                data: avgScores,
+                backgroundColor: 'rgba(66, 135, 245, 0.4)',
+                borderColor: '#4287f5',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(66, 135, 245, 0.7)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

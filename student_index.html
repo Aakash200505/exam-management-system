@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}My Performance - ExamElite{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="mb-5 d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold mb-0">My Analytics</h2>
+            <p class="text-muted">Visualize your learning journey and progress.</p>
+        </div>
+        <div class="icon-shape bg-soft-success rounded-circle p-3" style="background: rgba(40, 167, 69, 0.1);">
+            <i class="fas fa-chart-line fa-2x text-success"></i>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h5 class="fw-bold">Score Trends</h5>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-light text-dark">Recent 10 Exams</span>
+                    </div>
+                </div>
+
+                <div style="height: 400px;">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+
+                <div class="mt-5 pt-4 border-top">
+                    <div class="row text-center">
+                        <div class="col-md-4 border-end">
+                            <h3 class="fw-bold text-primary mb-1">{{ data|length }}</h3>
+                            <small class="text-muted text-uppercase fw-bold tiny-text">Exams Taken</small>
+                        </div>
+                        <div class="col-md-4 border-end">
+                            <h3 class="fw-bold text-success mb-1">
+                                {% if data %}
+                                {{ (data|sum / data|length)|round|int }}%
+                                {% else %}
+                                0%
+                                {% endif %}
+                            </h3>
+                            <small class="text-muted text-uppercase fw-bold tiny-text">Average Score</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h3 class="fw-bold text-warning mb-1">
+                                {% if data %}
+                                {{ data|max }}%
+                                {% else %}
+                                0%
+                                {% endif %}
+                            </h3>
+                            <small class="text-muted text-uppercase fw-bold tiny-text">Best Performance</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tiny-text {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    const examLabels = {{ labels| tojson }};
+    const scores = {{ data| tojson }};
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: examLabels,
+            datasets: [{
+                label: 'Your Score (%)',
+                data: scores,
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointBackgroundColor: '#fff',
+                pointBorderWidth: 3,
+                borderWidth: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

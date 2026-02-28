@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to ExamElite{% endblock %}
+
+{% block content %}
+<div class="section-full">
+    <div class="row align-items-center">
+        <div class="col-lg-6 text-center text-lg-start mb-5 mb-lg-0">
+            <h1 class="display-3 fw-800 mb-4" style="line-height: 1.1;">
+                Unlock Your <span
+                    style="background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Potential</span>
+            </h1>
+            <p class="lead text-muted mb-5">
+                The most advanced, intuitive, and beautiful online exam system for students and teachers. Start your
+                journey today with seamless exam management.
+            </p>
+            <div class="d-flex flex-column flex-sm-row gap-3">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-premium px-5 py-3 fs-5">Get Started Free</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-dark px-5 py-3 fs-5 rounded-pill">Sign
+                    In</a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="glass-card text-center py-5">
+                <i class="fas fa-rocket fa-5x mb-4 text-primary opacity-50"></i>
+                <h3>Ready to Learn?</h3>
+                <p>Join thousands of students and excel in your exams.</p>
+                <div class="responsive-grid text-center mt-4">
+                    <div>
+                        <h2 class="fw-bold mb-0">{{ exams_done }}</h2>
+                        <small class="text-muted">Exams Done</small>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-0">98%</h2>
+                        <small class="text-muted">Satisfaction</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

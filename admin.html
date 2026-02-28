@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - ExamElite{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold mb-0">Admin Dashboard</h2>
+            <p class="text-muted">Welcome back, Admin!</p>
+        </div>
+        <div class="d-none d-sm-block">
+            <span class="badge bg-danger px-3 py-2 rounded-pill">System Admin</span>
+        </div>
+    </div>
+
+    <div class="responsive-grid mb-5">
+        <!-- Manage Users Card -->
+        <div class="glass-card text-center d-flex flex-column h-100">
+            <div class="mb-4">
+                <div class="icon-shape bg-soft-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                    style="width: 70px; height: 70px; background: rgba(66, 135, 245, 0.1);">
+                    <i class="fas fa-user-shield fa-2x text-primary"></i>
+                </div>
+                <h4 class="fw-bold">Users</h4>
+                <p class="text-muted small">View and manage all registered users and roles.</p>
+            </div>
+            <div class="mt-auto">
+                <a href="#" class="btn btn-premium w-100">Manage Users</a>
+            </div>
+        </div>
+
+        <!-- Manage Courses Card -->
+        <div class="glass-card text-center d-flex flex-column h-100">
+            <div class="mb-4">
+                <div class="icon-shape bg-soft-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                    style="width: 70px; height: 70px; background: rgba(40, 167, 69, 0.1);">
+                    <i class="fas fa-layer-group fa-2x text-success"></i>
+                </div>
+                <h4 class="fw-bold">Courses</h4>
+                <p class="text-muted small">Overview of all active courses in the system.</p>
+            </div>
+            <div class="mt-auto">
+                <a href="{{ url_for('course.index') }}" class="btn btn-premium w-100">Manage Courses</a>
+            </div>
+        </div>
+
+        <!-- System Analytics Card -->
+        <div class="glass-card text-center d-flex flex-column h-100">
+            <div class="mb-4">
+                <div class="icon-shape bg-soft-info rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                    style="width: 70px; height: 70px; background: rgba(23, 162, 184, 0.1);">
+                    <i class="fas fa-server fa-2x text-info"></i>
+                </div>
+                <h4 class="fw-bold">Analytics</h4>
+                <p class="text-muted small">Global performance stats across all students.</p>
+            </div>
+            <div class="mt-auto">
+                <a href="{{ url_for('analytics.index') }}" class="btn btn-premium w-100">View Analytics</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <h3 class="fw-bold mb-4">Student Performance Overview</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr class="text-muted small text-uppercase">
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Exams Taken</th>
+                        <th>Avg. Score</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-soft-primary p-2 me-3"
+                                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(66, 135, 245, 0.1);">
+                                    <span class="fw-bold text-primary">{{ student.username[:1].upper() }}</span>
+                                </div>
+                                <span class="fw-bold">{{ student.username }}</span>
+                            </div>
+                        </td>
+                        <td>{{ student.email }}</td>
+                        <td><span class="badge bg-soft-dark text-dark">{{ student.exams_taken }}</span></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="fw-bold me-2">{{ student.avg_score }}%</span>
+                                <div class="progress flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar bg-primary" style="width: {{ student.avg_score }}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3">View Details</button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4">No students found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

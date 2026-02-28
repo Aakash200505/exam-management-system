@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}Attempting: {{ exam.title }}{% endblock %}
+
+{% block styles %}
+<style>
+    .question-card-item {
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .question-card-item.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .option-label {
+        display: block;
+        padding: 1rem;
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        margin-bottom: 0.8rem;
+        cursor: pointer;
+        transition: var(--transition);
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .option-label:hover {
+        background: rgba(var(--primary-h), var(--primary-s), var(--primary-l), 0.1);
+        border-color: var(--primary);
+    }
+
+    .form-check-input:checked+.option-label {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 4px 15px rgba(var(--primary-h), var(--primary-s), var(--primary-l), 0.3);
+    }
+
+    .form-check-input {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0 text-primary">{{ exam.title }}</h2>
+            <p class="text-muted small mb-0">Course: {{ exam.course.name }}</p>
+        </div>
+        <div class="timer-badge">
+            <i class="fas fa-clock me-2"></i><span id="time-display">00:00</span>
+        </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-container">
+        <div class="progress-bar-fill" id="exam-progress"></div>
+    </div>
+
+    <form id="examForm" action="{{ url_for('taking.submit_exam', exam_id=exam.id) }}" method="POST">
+        {% for q in exam.questions %}
+        <div class="question-card-item {% if loop.first %}active{% endif %}" id="q-card-{{ loop.index0 }}">
+            <div class="glass-card mb-4 mt-2">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="badge bg-soft-dark text-dark px-3 py-2 rounded-pill">Question {{ loop.index }} of {{
+                        exam.questions.count() }}</span>
+                    <span class="fw-bold text-primary">{{ q.marks }} Marks</span>
+                </div>
+
+                <h4 class="mb-5 fw-bold">{{ q.text }}</h4>
+
+                <div class="options-container">
+                    {% for opt in [('A', q.option_a), ('B', q.option_b), ('C', q.option_c), ('D', q.option_d)] %}
+                    <div class="form-check p-0">
+                        <input class="form-check-input" type="radio" name="question_{{ q.id }}"
+                            id="q{{ q.id }}_{{ opt[0]|lower }}" value="{{ opt[0] }}">
+                        <label class="option-label" for="q{{ q.id }}_{{ opt[0]|lower }}">
+                            <span class="fw-bold me-3">{{ opt[0] }}.</span> {{ opt[1] }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="d-flex justify-content-between mt-5">
+                    <button type="button"
+                        class="btn btn-outline-dark px-4 py-2 rounded-pill {% if loop.first %}invisible{% endif %}"
+                        onclick="showQuestion({{ loop.index0 - 1 }})">
+                        <i class="fas fa-arrow-left me-2"></i> Previous
+                    </button>
+
+                    {% if not loop.last %}
+                    <button type="button" class="btn btn-premium px-5 py-2"
+                        onclick="showQuestion({{ loop.index0 + 1 }})">
+                        Next <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                    {% else %}
+                    <button type="submit" class="btn btn-success px-5 py-2"
+                        onclick="return confirm('Finish and submit?');">
+                        Submit Exam <i class="fas fa-check-circle ms-2"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let currentQuestion = 0;
+    const totalQuestions = {{ exam.questions.count() }};
+    const progressBar = document.getElementById('exam-progress');
+    const timerDisplay = document.getElementById('time-display');
+    const examForm = document.getElementById('examForm');
+
+    function showQuestion(index) {
+        if (index < 0 || index >= totalQuestions) return;
+
+        document.getElementById(`q-card-${currentQuestion}`).classList.remove('active');
+        document.getElementById(`q-card-${index}`).classList.add('active');
+        currentQuestion = index;
+
+        // Update Progress Bar
+        const progress = ((index + 1) / totalQuestions) * 100;
+        progressBar.style.width = progress + '%';
+    }
+
+    // Initialize Progress
+    showQuestion(0);
+
+    // Timer Logic
+    let timeRemaining = {{ exam.duration_minutes }} * 60;
+
+    function updateTimer() {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert('Time is up! Submitting your exam automatically.');
+            examForm.submit();
+        }
+        timeRemaining--;
+    }
+
+    const timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // Prevent random navigation
+    window.onbeforeunload = function () {
+        return "Are you sure you want to leave? Your progress will be lost.";
+    };
+
+    examForm.onsubmit = function () {
+        window.onbeforeunload = null;
+    };
+</script>
+{% endblock %}
