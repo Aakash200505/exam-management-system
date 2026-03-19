@@ -1,7 +1,14 @@
+import sys
+from pathlib import Path
+
 from flask import Flask, render_template
 from config import Config
 from extensions import db, login_manager, migrate
 from models import User, Result
+
+BASE_DIR = Path(__file__).resolve().parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
 def create_app(config_class=Config):
     app = Flask(__name__)
