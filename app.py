@@ -49,6 +49,9 @@ def create_app(config_class=Config):
         exams_done = Result.query.count()
         return render_template('index.html', exams_done=exams_done)
 
+    with app.app_context():
+        db.create_all()
+
     return app
 
 app = create_app()
