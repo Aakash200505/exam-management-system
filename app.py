@@ -1,10 +1,21 @@
 import sys
+import os
 from pathlib import Path
 
 from flask import Flask, render_template
 from config import Config
 from extensions import db, login_manager, migrate
 from models import User, Result
+
+# Import Blueprints at the top level so Vercel's static builder traces the dependency
+from modules.auth import auth_bp
+from modules.dashboard import dashboard_bp
+from modules.course import course_bp
+from modules.exam import exam_bp
+from modules.taking import taking_bp
+from modules.result import result_bp
+from modules.analytics import analytics_bp
+from modules.profile import profile_bp
 
 BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
@@ -24,16 +35,6 @@ def create_app(config_class=Config):
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
-
-    # Register Blueprints
-    from modules.auth import auth_bp
-    from modules.dashboard import dashboard_bp
-    from modules.course import course_bp
-    from modules.exam import exam_bp
-    from modules.taking import taking_bp
-    from modules.result import result_bp
-    from modules.analytics import analytics_bp
-    from modules.profile import profile_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
