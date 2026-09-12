@@ -100,6 +100,14 @@ gunicorn app:app
 
 Render generates `SECRET_KEY`. SQLite is appropriate for demos and small deployments; use a managed database through `DATABASE_URL` for persistent production data.
 
+## GitHub Pages deployment (static shell)
+
+This repository also includes a root-level `index.html` and `static/js/github-pages.js` for GitHub Pages. It uses the same public landing, registration, and login styling as the Flask app and is deployed by `.github/workflows/deploy-pages.yml` whenever `main` is pushed.
+
+In the GitHub repository, open **Settings → Pages** and select **GitHub Actions** as the source. After the next push to `main`, the Actions workflow publishes the site.
+
+GitHub Pages only serves static HTML, CSS, and JavaScript. The Pages version therefore cannot run Flask routes, SQLite, secure server sessions, email delivery, uploads, or the course/exam/result workflows. Deploy the Flask application (for example, to Render) when those features are required.
+
 ## Verification
 
 ```powershell
