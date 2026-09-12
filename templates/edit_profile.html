@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Edit profile{% endblock %}
+{% block content %}
+<div class="page-header narrow-header">
+  <div>
+    <span class="eyebrow">Account settings</span>
+    <h1>Edit profile</h1>
+  </div>
+</div>
+
+<div class="form-shell">
+  <form method="post" enctype="multipart/form-data" class="panel form-panel">
+    <div class="form-avatar-wrap">
+      <img class="profile-avatar avatar-edit" src="{{ avatar_url(current_user) }}" alt="{{ current_user.full_name }}">
+    </div>
+
+    <div class="field-grid">
+      <div class="field">
+        <label for="first_name">First Name</label>
+        <input id="first_name" class="form-control" name="first_name" value="{{ current_user.first_name }}" required>
+      </div>
+      <div class="field">
+        <label for="last_name">Last Name</label>
+        <input id="last_name" class="form-control" name="last_name" value="{{ current_user.last_name }}" required>
+      </div>
+      <div class="field full-width">
+        <label for="username">Username</label>
+        <input id="username" class="form-control" name="username" value="{{ current_user.username }}" required>
+      </div>
+      <div class="field full-width">
+        <label for="avatar">Avatar</label>
+        <input id="avatar" class="form-control" type="file" name="avatar" accept=".png,.jpg,.jpeg,.webp">
+      </div>
+      <div class="field">
+        <label>Role</label>
+        <div class="read-only-value">{{ current_user.role|title }}</div>
+      </div>
+      <div class="field">
+        <label>{% if current_user.role == 'student' %}Student ID{% else %}Teacher ID{% endif %}</label>
+        <div class="read-only-value">{{ current_user.student_id or current_user.teacher_id }}</div>
+      </div>
+      <div class="field full-width">
+        <label for="new_password">New Password</label>
+        <input id="new_password" class="form-control" type="password" name="new_password" minlength="10">
+      </div>
+      <div class="field full-width">
+        <label for="confirmation">Confirm New Password</label>
+        <input id="confirmation" class="form-control" type="password" name="confirmation">
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn btn-primary">Save changes</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Online exam platform{% endblock %}
+{% block content %}
+<main class="landing-page">
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">The modern exam platform</span>
+      <h1>Make every assessment<br><em>count.</em></h1>
+      <p>Create meaningful learning moments with intuitive tools for building, taking, and understanding assessments.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Create your account <span aria-hidden="true">→</span></a>
+        <a class="hero-link" href="{{ url_for('login') }}">I already have an account</a>
+      </div>
+    </div>
+    <div class="hero-panel" aria-label="Platform overview">
+      <div class="hero-panel-top"><span class="pulse-dot"></span><span>Assessment overview</span><span class="panel-date">Today</span></div>
+      <div class="hero-score"><span>Average performance</span><strong>84<span>%</span></strong><small>↑ 12% from last assessment</small></div>
+      <div class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="hero-panel-bottom"><span><b>24</b> active learners</span><span><b>6</b> assessments</span></div>
+    </div>
+  </section>
+
+  <section class="features-section" aria-labelledby="workflow-title">
+    <div class="section-intro"><span class="eyebrow">A simpler workflow</span><h2 id="workflow-title">Everything you need,<br>nothing you don’t.</h2></div>
+    <div class="feature-grid">
+      <article class="feature-card feature-build"><div class="feature-icon">✦</div><span class="feature-number">01</span><h3>Build</h3><p>Create courses, assessments, and question banks in one focused workspace.</p><div class="feature-line"></div><span class="feature-foot">Made for educators <b>→</b></span></article>
+      <article class="feature-card feature-assess"><div class="feature-icon">✓</div><span class="feature-number">02</span><h3>Assess</h3><p>Deliver clear, timed exams that help students stay focused and confident.</p><div class="feature-line"></div><span class="feature-foot">Designed for focus <b>→</b></span></article>
+      <article class="feature-card feature-understand"><div class="feature-icon">↗</div><span class="feature-number">03</span><h3>Understand</h3><p>Turn results into useful insight with progress, rankings, and analytics.</p><div class="feature-line"></div><span class="feature-foot">Insight at a glance <b>→</b></span></article>
+    </div>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Teacher dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <span class="eyebrow">Welcome back</span>
+    <h1>Welcome back, {{ current_user.first_name }}</h1>
+    <p class="page-subtitle">Teacher Dashboard</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn-outline" href="{{ url_for('create_course') }}">+ Create course</a>
+    <a class="btn btn-primary" href="{{ url_for('create_exam') }}">+ Create exam</a>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-label">Courses</span>
+    <strong>{{ courses|length }}</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Exams</span>
+    <strong>{{ exams|length }}</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Questions</span>
+    <strong>{{ question_count }}</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Students</span>
+    <strong>{{ student_count }}</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Results</span>
+    <strong>{{ results|length }}</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Analytics</span>
+    <strong>Live</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Leaderboard</span>
+    <strong>Top</strong>
+  </div>
+</div>
+
+<section class="content-section">
+  <div class="section-head">
+    <h2>Recent Exams</h2>
+    <a href="{{ url_for('exams') }}">View all</a>
+  </div>
+  <div class="cards-grid">
+    {% for exam in exams %}
+      <div class="dashboard-card">
+        <span class="card-kicker">{{ exam.course.name }}</span>
+        <h3>{{ exam.title }}</h3>
+        <p>{{ exam.description }}</p>
+        <div class="card-meta">
+          <span>{{ exam.questions|length }} questions</span>
+          <span>{{ exam.duration }} min</span>
+        </div>
+        <a class="btn btn-primary btn-sm mt-3" href="{{ url_for('exam_detail', exam_id=exam.id) }}">Open exam</a>
+      </div>
+    {% else %}
+      <div class="empty-card">
+        <p>No exams have been created yet.</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

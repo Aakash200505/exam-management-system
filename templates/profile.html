@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="profile-wrapper">
+  <div class="profile-card">
+    <div class="profile-header">
+      <img class="profile-avatar" src="{{ avatar_url(current_user) }}" alt="{{ current_user.full_name }}">
+      <span class="role-badge">{{ current_user.role|title }}</span>
+    </div>
+
+    <h1>{{ current_user.full_name }}</h1>
+    <p class="profile-id">
+      {% if current_user.role == 'student' %}
+        Student ID: <strong>{{ current_user.student_id }}</strong>
+      {% else %}
+        Teacher ID: <strong>{{ current_user.teacher_id }}</strong>
+      {% endif %}
+    </p>
+
+    <div class="profile-details">
+      <div class="detail-row">
+        <span>First Name</span>
+        <strong>{{ current_user.first_name }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Last Name</span>
+        <strong>{{ current_user.last_name }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Username</span>
+        <strong>{{ current_user.username }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Role</span>
+        <strong>{{ current_user.role|title }}</strong>
+      </div>
+      {% if current_user.role == 'student' %}
+        <div class="detail-row">
+          <span>Student ID</span>
+          <strong>{{ current_user.student_id }}</strong>
+        </div>
+      {% else %}
+        <div class="detail-row">
+          <span>Teacher ID</span>
+          <strong>{{ current_user.teacher_id }}</strong>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="profile-actions">
+      <a class="btn btn-primary" href="{{ url_for('edit_profile') }}">Edit Profile</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

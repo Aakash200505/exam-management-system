@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Student dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <span class="eyebrow">Welcome back</span>
+    <h1>Welcome back, {{ current_user.first_name }}</h1>
+    <p class="page-subtitle">Student Dashboard</p>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('courses') }}">Browse courses</a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-label">Enrolled Courses</span>
+    <strong>{{ enrollments|length }}</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Available Exams</span>
+    <strong>{{ exams|length }}</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Completed Exams</span>
+    <strong>{{ results|length }}</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Average Score</span>
+    <strong>{{ (results|map(attribute='percentage')|sum / (results|length or 1))|round(1) if results else 0 }}%</strong>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Leaderboard</span>
+    <strong>Live</strong>
+  </div>
+</div>
+
+<section class="content-section">
+  <div class="section-head">
+    <h2>My Courses</h2>
+    <a href="{{ url_for('courses') }}">View all</a>
+  </div>
+  <div class="cards-grid">
+    {% for enrollment in enrollments %}
+      <a class="dashboard-card" href="{{ url_for('course_detail', course_id=enrollment.course.id) }}">
+        <span class="card-kicker">Course</span>
+        <h3>{{ enrollment.course.name }}</h3>
+        <p>{{ enrollment.course.description }}</p>
+        <div class="card-meta">
+          <span>Enrolled {{ enrollment.enrolled_at.strftime('%d %b %Y') }}</span>
+          <span>Open</span>
+        </div>
+      </a>
+    {% else %}
+      <div class="empty-card">
+        <p>You are not enrolled in a course yet.</p>
+        <a href="{{ url_for('courses') }}">Browse courses</a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="section-head">
+    <h2>Available Exams</h2>
+    <a href="{{ url_for('exams') }}">See all</a>
+  </div>
+  <div class="cards-grid">
+    {% for exam in exams %}
+      <div class="dashboard-card">
+        <span class="card-kicker">{{ exam.course.name }}</span>
+        <h3>{{ exam.title }}</h3>
+        <p>{{ exam.description }}</p>
+        <div class="card-meta">
+          <span>{{ exam.duration }} min</span>
+          <span>{{ exam.questions|length }} questions</span>
+        </div>
+        <a class="btn btn-primary btn-sm mt-3" href="{{ url_for('take_exam', exam_id=exam.id) }}">Start exam</a>
+      </div>
+    {% else %}
+      <div class="empty-card">
+        <p>No exams are available for your courses right now.</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
